@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecut.ssm.dao.SelectedCourseDao">
+    <!-- 查询所有字段 -->
+    <sql id="Base_Column_List">
+        courseId, stuId, courseName, courseType, courseNature, remainingCredits
+    </sql>
+
+    <!-- 添加选课记录 -->
+    <insert id="insertSelectedCourse" parameterType="SelectedCourse">
+        INSERT INTO selected_course (<include refid="Base_Column_List"/>)
+        VALUES (#{courseId}, #{stuId}, #{courseName}, #{courseType}, 
+                #{courseNature}, #{remainingCredits})
+    </insert>
+
+    <!-- 删除选课记录 -->
+    <delete id="deleteSelectedCourse">
+        DELETE FROM selected_course 
+        WHERE courseId = #{courseId} AND stuId = #{stuId}
+    </delete>
+
+    <!-- 更新选课信息 -->
+    <update id="updateSelectedCourse" parameterType="SelectedCourse">
+        UPDATE selected_course
+        SET courseName = #{courseName},
+            courseType = #{courseType},
+            courseNature = #{courseNature},
+            remainingCredits = #{remainingCredits}
+        WHERE courseId = #{courseId} AND stuId = #{stuId}
+    </update>
+
+    <!-- 根据学生ID查询所有选课记录 -->
+    <select id="getSelectedCoursesByStuId" resultType="SelectedCourse">
+        SELECT <include refid="Base_Column_List"/>
+        FROM selected_course
+        WHERE stuId = #{stuId}
+    </select>
+
+    <!-- 根据课程号或课程名查询选课记录 -->
+    <select id="getSelectedCoursesByIdOrName" resultType="SelectedCourse">
+        SELECT <include refid="Base_Column_List"/>
+        FROM selected_course
+        WHERE stuId = #{stuId}
+        AND (courseId LIKE CONCAT('%', #{keyword}, '%')
+        OR courseName LIKE CONCAT('%', #{keyword}, '%'))
+    </select>
+
+    <!-- 查询指定学生是否已选某课程 -->
+    <select id="getSelectedCourse" resultType="SelectedCourse">
+        SELECT <include refid="Base_Column_List"/>
+        FROM selected_course
+        WHERE courseId = #{courseId} AND stuId = #{stuId}
+    </select>
+
+    <!-- 查询学生的选课记录数量 -->
+    <select id="getSelectedCoursesCountByStuId" resultType="int">
+        SELECT COUNT(*)
+        FROM selected_course
+        WHERE stuId = #{stuId}
+    </select>
+</mapper> 

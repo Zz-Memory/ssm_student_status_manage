@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecut.ssm.dao.StudentDao">
+    <!-- 查询所有字段 -->
+    <sql id="Base_Column_List">
+        stuId, stuName, password, gender, age, phoneNum, major, academicStatus, 
+        gpa, intellectualScore, earnedCredits, retakeStatus
+    </sql>
+
+    <!-- 添加学生 -->
+    <insert id="insertStudent" parameterType="Student">
+        INSERT INTO student (<include refid="Base_Column_List"/>)
+        VALUES (#{stuId}, #{stuName}, #{password}, #{gender}, #{age}, #{phoneNum}, 
+                #{major}, #{academicStatus}, #{gpa}, #{intellectualScore}, 
+                #{earnedCredits}, #{retakeStatus})
+    </insert>
+
+    <!-- 删除学生 -->
+    <delete id="deleteStudentById" parameterType="string">
+        DELETE FROM student WHERE stuId = #{stuId}
+    </delete>
+
+    <!-- 更新学生信息 -->
+    <update id="updateStudent" parameterType="Student">
+        UPDATE student
+        <set>
+            <if test="stuName != null">stuName = #{stuName},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="phoneNum != null">phoneNum = #{phoneNum},</if>
+            <if test="major != null">major = #{major},</if>
+            <if test="academicStatus != null">academicStatus = #{academicStatus},</if>
+            <if test="gpa != null">gpa = #{gpa},</if>
+            <if test="intellectualScore != null">intellectualScore = #{intellectualScore},</if>
+            <if test="earnedCredits != null">earnedCredits = #{earnedCredits},</if>
+            <if test="retakeStatus != null">retakeStatus = #{retakeStatus}</if>
+        </set>
+        WHERE stuId = #{stuId}
+    </update>
+
+    <!-- 根据ID查询学生 -->
+    <select id="getStudentById" resultType="Student">
+        SELECT <include refid="Base_Column_List"/>
+        FROM student
+        WHERE stuId = #{stuId}
+    </select>
+
+    <!-- 根据学号或姓名模糊查询 -->
+    <select id="getStudentByIdOrName" resultType="Student">
+        SELECT <include refid="Base_Column_List"/>
+        FROM student
+        WHERE stuId LIKE CONCAT('%', #{keyword}, '%')
+        OR stuName LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <!-- 查询所有学生 -->
+    <select id="getAllStudents" resultType="Student">
+        SELECT <include refid="Base_Column_List"/>
+        FROM student
+    </select>
+
+    <!-- 学生登录验证 -->
+    <select id="validateStudent" resultType="Student">
+        SELECT <include refid="Base_Column_List"/>
+        FROM student
+        WHERE stuId = #{stuId} AND password = #{password}
+    </select>
+
+    <!-- 检查学号是否存在 -->
+    <select id="checkStuIdExists" resultType="int">
+        SELECT COUNT(*)
+        FROM student
+        WHERE stuId = #{stuId}
+    </select>
+</mapper> 
